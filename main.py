@@ -1,7 +1,6 @@
 import streamlit as st
 from PIL import Image
 import random
-import base64
 
 # Path to your card images folder
 card_images_path = 'card_images/'
@@ -31,33 +30,26 @@ def match_check(deck, flipped):
         return deck[flipped[0]] == deck[flipped[1]]
     return False
 
-# Convert an image file to base64
-def image_to_base64(image_file):
-    with open(image_file, "rb") as img_file:
-        return base64.b64encode(img_file.read()).decode()
-
 # Display the memory board of cards
 def display_board(deck, flipped_cards, matched_cards):
     cols = st.columns(15)  # Create columns for a larger grid
-    back_image_base64 = image_to_base64(card_images_path + "card_back.png")
-
     for i, card in enumerate(deck):
         col = cols[i % 15]  # Assign the card to the correct column
 
-        # Check if the card is flipped or matched
+        # If the card is flipped or matched, show the image
         if i in flipped_cards or i in matched_cards:
-            col.image(card, use_column_width=True)  # Show the revealed or matched card
+            col.image(card, use_column_width=True)
         else:
-            # Create a clickable image for the back of the card
-            html = f'<a href="#" onclick="window.parent.postMessage({{"type": "flip", "index": {i}}}, "*")">' \
-                   f'<img src="data:image/png;base64,{back_image_base64}" style="width: 100%;"></a>'
-            col.markdown(html, unsafe_allow_html=True)
+            # Show the button to flip the card
+            if col.button("", key=f"button-{i}"):  # Button click event
+                st.session_state.flipped_cards.append(i)  # Add index to flipped cards
 
-# CSS to center align the score and current player display
+# CSS to center align elements and add styling
 def inject_css():
     st.markdown(
         """
         <style>
+        /* Center align the current turn */
         .centered-text {
             display: flex;
             justify-content: center;
@@ -65,6 +57,8 @@ def inject_css():
             font-weight: bold;
             font-size: 24px;
         }
+
+        /* Add margin between the score and the game board */
         .score-area {
             margin-bottom: 20px;
         }
@@ -95,12 +89,14 @@ def main_streamlit():
         if 'deck' not in st.session_state:
             initialize_game()
 
-        # Display the current scores on the main page
+        # Display the current scores
         if st.session_state.mode == 'one_player':
             st.write(f"<div class='score-area'>Matches: {st.session_state.scores[0]} / {len(card_filenames)}</div>", unsafe_allow_html=True)
         else:
             st.write(f"<div class='score-area'>Player 1 Matches: {st.session_state.scores[0]} / {len(card_filenames)}</div>", unsafe_allow_html=True)
             st.write(f"<div class='score-area'>Player 2 Matches: {st.session_state.scores[1]} / {len(card_filenames)}</div>", unsafe_allow_html=True)
+            
+            # Display current turn in two-player mode
             st.markdown(f"<div class='centered-text'>Current Turn: Player {st.session_state.current_player + 1}</div>", unsafe_allow_html=True)
 
         # Render the memory game board
@@ -114,10 +110,9 @@ def main_streamlit():
             if st.session_state.mode == 'two_players':
                 # Switch to the other player after checking matches
                 st.session_state.current_player = 1 - st.session_state.current_player
-            # Reset flipped cards
+            # Reset flipped cards after a brief delay
             st.session_state.flipped_cards = []
 
-# Initialize game state
 def initialize_game():
     st.session_state.deck = initialize_deck(card_filenames, card_images_path)
     st.session_state.flipped_cards = []  # Stores indices of currently flipped cards
