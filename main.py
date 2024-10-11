@@ -40,9 +40,10 @@ def display_board(deck, flipped_cards, matched_cards):
         if i in flipped_cards or i in matched_cards:
             col.image(card, use_column_width=True)
         else:
-            # Show the button to flip the card
-            if col.button("", key=f"button-{i}"):  # Button click event
+            # Show the back image as a button
+            if col.button("", key=f"button-{i}", help="Flip the card"):  
                 st.session_state.flipped_cards.append(i)  # Add index to flipped cards
+                # You can also include any additional logic if needed here
 
 # CSS to center align elements and add styling
 def inject_css():
