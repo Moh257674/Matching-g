@@ -36,14 +36,13 @@ def display_board(deck, flipped_cards, matched_cards):
     for i, card in enumerate(deck):
         col = cols[i % 15]  # Assign the card to the correct column
 
-        # If the card is flipped or matched, show the image
+        # If the card is flipped or matched, show the actual card image
         if i in flipped_cards or i in matched_cards:
             col.image(card, use_column_width=True)
         else:
             # Show the back image as a button
             if col.button("", key=f"button-{i}", help="Flip the card"):  
                 st.session_state.flipped_cards.append(i)  # Add index to flipped cards
-                # You can also include any additional logic if needed here
 
 # CSS to center align elements and add styling
 def inject_css():
