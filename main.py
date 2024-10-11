@@ -36,30 +36,47 @@ def display_board(deck, flipped_cards, matched_cards):
     cols = st.columns(15)  # Create 8 columns for a larger grid
     for i, card in enumerate(deck):
         col = cols[i % 15]  # Assign the card to the correct column
-        with col:  # To control the alignment of each card
+        with col:  # Control the alignment and spacing
+            # Set a fixed height container for both flipped and unflipped cards
+            container_css = f"""
+            <style>
+            .card-container-{i} {{
+                height: 150px;  /* Fixed height for cards */
+                width: 100px;  /* Fixed width for cards */
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }}
+            </style>
+            """
+            st.markdown(container_css, unsafe_allow_html=True)
+
+            st.markdown(f"<div class='card-container-{i}'>", unsafe_allow_html=True)
             if i in flipped_cards or i in matched_cards:
                 st.image(card, use_column_width=True)  # Show the revealed or matched card
             else:
-                # Show the card back
+                # Show the card back, ensuring it's the same size as the flipped card
                 if st.button("", key=f"card-{i}"):  # Using a button to track clicks
                     st.session_state.flipped_cards.append(i)
                 st.image(Image.open(card_images_path + "card_back.png"), use_column_width=True)
-                
-    # Add custom CSS to ensure fixed height and alignment
-    st.markdown(
-        """
-        <style>
-        .element-container {
-            display: flex;
-            justify-content: center;
-        }
-        img {
-            max-height: 150px;  /* Set a fixed height for all images */
-            object-fit: cover;  /* Ensure all images are centered and scaled */
-        }
-        </style>
-        """, unsafe_allow_html=True
-    )
+            st.markdown("</div>", unsafe_allow_html=True)
+
+# Add CSS to ensure the button and card are of equal size
+st.markdown(
+    """
+    <style>
+    .element-container {
+        display: flex;
+        justify-content: center;
+    }
+    img {
+        max-height: 150px;  /* Set a fixed height for all images */
+        max-width: 100px;   /* Set a fixed width for all images */
+        object-fit: cover;  /* Ensure all images are centered and scaled properly */
+    }
+    </style>
+    """, unsafe_allow_html=True
+)
 
 
 # CSS to disable the "View fullscreen" magnifier icon on images
