@@ -31,39 +31,32 @@ def match_check(deck, flipped):
         return deck[flipped[0]] == deck[flipped[1]]
     return False
 
-def inject_css():
-    st.markdown(
-        """
-        <style>
-        /* Ensure that card containers maintain a fixed height */
-        .card-container {
-            height: 150px;  /* Adjust as needed */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .card-container img {
-            max-height: 100%;  /* Make sure images scale properly within the fixed height */
-        }
-        </style>
-        """, unsafe_allow_html=True
-    )
-
-# Display the memory board of cards with fixed height containers
+# Display the memory board of cards
 def display_board(deck, flipped_cards, matched_cards):
     cols = st.columns(8)  # Create 8 columns for a larger grid
     for i, card in enumerate(deck):
         col = cols[i % 8]  # Assign the card to the correct column
-        with col:
-            # Wrap each card inside a div with a fixed height class
-            st.markdown('<div class="card-container">', unsafe_allow_html=True)
-            if i in flipped_cards or i in matched_cards:
-                col.image(card, use_column_width=True)  # Show the revealed or matched card
-            else:
-                if col.button("", key=f"card-{i}"):  # Using a button to track clicks
-                    st.session_state.flipped_cards.append(i)
-                col.image(Image.open(card_images_path + "card_back.png"), use_column_width=True)  
-            st.markdown('</div>', unsafe_allow_html=True)  # Close the card container
+        if i in flipped_cards or i in matched_cards:
+            col.image(card, use_column_width=True)  # Show the revealed or matched card
+        else:
+            # Show the card back
+            if col.button("", key=f"card-{i}"):  # Using a button to track clicks
+                st.session_state.flipped_cards.append(i)
+            col.image(Image.open(card_images_path + "card_back.png"), use_column_width=True)  
+
+# CSS to disable the zoom/magnifier icon on hover
+# CSS to disable the "View fullscreen" magnifier icon on images
+def inject_css():
+    st.markdown(
+        """
+        <style>
+        /* Hide the fullscreen icon (magnifying glass) */
+        button[title="View fullscreen"] {
+            display: none;
+        }
+        </style>
+        """, unsafe_allow_html=True
+    )
 
 
 # Main Streamlit application logic
