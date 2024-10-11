@@ -1,3 +1,4 @@
+# --- STREAMLIT VERSION ---
 import streamlit as st
 from PIL import Image
 import random
@@ -35,24 +36,13 @@ def display_board(deck, flipped_cards, matched_cards):
     cols = st.columns(15)  # Create columns for a larger grid
     for i, card in enumerate(deck):
         col = cols[i % 15]  # Assign the card to the correct column
-        
-        with col:
-            # Display the card back image if not flipped or matched
-            if i not in flipped_cards and i not in matched_cards:
-                # Create an image button using Markdown
-                st.markdown(
-                    f'<a href="#" onclick="document.getElementById(\'card-{i}\').click()"><img src="{card_images_path}card_back.png" width="100%" /></a>', 
-                    unsafe_allow_html=True
-                )
-                st.button("", key=f"card-{i}", on_click=lambda idx=i: handle_click(idx))
-            else:
-                # Show the revealed or matched card
-                st.image(card, use_column_width=True)
-
-def handle_click(index):
-    # Add the card index to flipped cards on click
-    if len(st.session_state.flipped_cards) < 2:  # Only allow flipping if less than 2 cards are flipped
-        st.session_state.flipped_cards.append(index)
+        if i in flipped_cards or i in matched_cards:
+            col.image(card, use_column_width=True)  # Show the revealed or matched card
+        else:
+            # Show the card back
+            if col.button("", key=f"card-{i}"):  # Using a button to track clicks
+                st.session_state.flipped_cards.append(i)
+            col.image(Image.open(card_images_path + "card_back.png"), use_column_width=True)
 
 # CSS to disable the "View fullscreen" magnifier icon on images
 def inject_css():
