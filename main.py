@@ -33,35 +33,29 @@ def match_check(deck, flipped):
 
 # Display the memory board of cards
 def display_board(deck, flipped_cards, matched_cards):
-    cols = st.columns(15)  # Create 8 columns for a larger grid
+    cols = st.columns(15)  # Create 10 columns for a grid with 10 cards per row
     for i, card in enumerate(deck):
         col = cols[i % 15]  # Assign the card to the correct column
         with col:  # Control the alignment and spacing
-            # Set a fixed height container for both flipped and unflipped cards
-            container_css = f"""
-            <style>
-            .card-container-{i} {{
-                height: 150px;  /* Fixed height for cards */
-                width: 100px;  /* Fixed width for cards */
-                display: flex;
-                justify-content: center;
-                align-items: center;
-            }}
-            </style>
-            """
-            st.markdown(container_css, unsafe_allow_html=True)
+            # Static container for both the image and the button
+            st.markdown(
+                f"""
+                <div style="height: 150px; width: 100px; display: flex; justify-content: center; align-items: center; position: relative;">
+                """, unsafe_allow_html=True
+            )
 
-            st.markdown(f"<div class='card-container-{i}'>", unsafe_allow_html=True)
             if i in flipped_cards or i in matched_cards:
-                st.image(card, use_column_width=True)  # Show the revealed or matched card
+                # Show the revealed or matched card
+                st.image(card, use_column_width=True)
             else:
-                # Show the card back, ensuring it's the same size as the flipped card
-                if st.button("", key=f"card-{i}"):  # Using a button to track clicks
+                # Show the card back with a static button in the same place
+                if st.button("Flip", key=f"card-{i}", help="Flip the card", use_container_width=True):
                     st.session_state.flipped_cards.append(i)
                 st.image(Image.open(card_images_path + "card_back.png"), use_column_width=True)
+            
             st.markdown("</div>", unsafe_allow_html=True)
 
-# Add CSS to ensure the button and card are of equal size
+# CSS to ensure the button and card are aligned with the same size and spacing
 st.markdown(
     """
     <style>
@@ -70,14 +64,17 @@ st.markdown(
         justify-content: center;
     }
     img {
-        max-height: 150px;  /* Set a fixed height for all images */
-        max-width: 100px;   /* Set a fixed width for all images */
-        object-fit: cover;  /* Ensure all images are centered and scaled properly */
+        max-height: 150px;  /* Fixed height for all images */
+        max-width: 100px;   /* Fixed width for all images */
+        object-fit: cover;  /* Center images within the card area */
+    }
+    button {
+        height: 150px;  /* Button has same height as the card */
+        width: 100px;   /* Button has same width as the card */
     }
     </style>
     """, unsafe_allow_html=True
 )
-
 
 # CSS to disable the "View fullscreen" magnifier icon on images
 def inject_css():
