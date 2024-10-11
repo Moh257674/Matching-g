@@ -34,22 +34,17 @@ def match_check(deck, flipped):
 # Display the memory board of cards
 def display_board(deck, flipped_cards, matched_cards):
     cols = st.columns(8)  # Create 8 columns for a larger grid
-    card_height = 150  # Set a fixed height for the cards
-
     for i, card in enumerate(deck):
         col = cols[i % 8]  # Assign the card to the correct column
         if i in flipped_cards or i in matched_cards:
-            col.image(card, use_column_width=True, output_format="PNG")
+            col.image(card, use_column_width=True)  # Show the revealed or matched card
         else:
-            if col.button("", key=f"card-{i}", help="Click to flip card"):
+            # Show the card back
+            if col.button("", key=f"card-{i}"):  # Using a button to track clicks
                 st.session_state.flipped_cards.append(i)
-            col.image(
-                Image.open(card_images_path + "card_back.png"),
-                use_column_width=True,
-                output_format="PNG",
-                height=card_height  # Fixed height for the back of the card
-            )
+            col.image(Image.open(card_images_path + "card_back.png"), use_column_width=True)  
 
+# CSS to disable the zoom/magnifier icon on hover
 # CSS to disable the "View fullscreen" magnifier icon on images
 def inject_css():
     st.markdown(
@@ -59,14 +54,10 @@ def inject_css():
         button[title="View fullscreen"] {
             display: none;
         }
-        /* Set consistent height for card images to prevent layout shifting */
-        [data-testid="stImage"] img {
-            height: 150px;
-            object-fit: contain;
-        }
         </style>
         """, unsafe_allow_html=True
     )
+
 
 # Main Streamlit application logic
 def main_streamlit():
