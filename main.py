@@ -101,9 +101,9 @@ def main_streamlit():
         else:
             st.write(f"<div class='score-area'>Player 1 Matches: {st.session_state.scores[0]} / {len(card_filenames)}</div>", unsafe_allow_html=True)
             st.write(f"<div class='score-area'>Player 2 Matches: {st.session_state.scores[1]} / {len(card_filenames)}</div>", unsafe_allow_html=True)
-
-        # Center the current player's turn
-        st.markdown(f"<div class='centered-text'>Current Turn: Player {st.session_state.current_player + 1}</div>", unsafe_allow_html=True)
+            
+            # Display current turn in two-player mode
+            st.markdown(f"<div class='centered-text'>Current Turn: Player {st.session_state.current_player + 1}</div>", unsafe_allow_html=True)
 
         # Render the memory game board
         display_board(st.session_state.deck, st.session_state.flipped_cards, st.session_state.matched_cards)
