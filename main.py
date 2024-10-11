@@ -32,9 +32,9 @@ def match_check(deck, flipped):
 
 # Display the memory board of cards
 def display_board(deck, flipped_cards, matched_cards):
-    cols = st.columns(8)  # Create columns for a larger grid
+    cols = st.columns(6)  # Create columns for a larger grid
     for i, card in enumerate(deck):
-        col = cols[i % 8]  # Assign the card to the correct column
+        col = cols[i % 6]  # Assign the card to the correct column
 
         # If the card is flipped or matched, show the image
         if i in flipped_cards or i in matched_cards:
