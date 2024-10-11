@@ -44,7 +44,8 @@ def display_board(deck, flipped_cards, matched_cards):
                 st.session_state.flipped_cards.append(i)
             col.image(Image.open(card_images_path + "card_back.png"), use_column_width=True)
 
-# CSS to disable the zoom/magnifier icon on hover and center all elements
+# CSS to disable the zoom/magnifier icon on hover
+# CSS to disable the "View fullscreen" magnifier icon on images
 def inject_css():
     st.markdown(
         """
@@ -53,16 +54,19 @@ def inject_css():
         button[title="View fullscreen"] {
             display: none;
         }
-        /* Center all text */
+
+        /* Center align the current turn */
         .centered-text {
-            text-align: center;
-        }
-        /* Center the whole container */
-        .stApp {
             display: flex;
             justify-content: center;
             align-items: center;
-            flex-direction: column;
+            font-weight: bold;
+            font-size: 24px;
+        }
+
+        /* Add margin between the score and the game board */
+        .score-area {
+            margin-bottom: 20px;
         }
         </style>
         """, unsafe_allow_html=True
@@ -70,36 +74,35 @@ def inject_css():
 
 # Main Streamlit application logic
 def main_streamlit():
-    st.title("Memory Match Game", anchor=False)
+    st.title("Memory Match Game")
 
     # Inject custom CSS
     inject_css()
 
     # Mode selection logic
     if 'mode' not in st.session_state:
-        st.markdown("<div class='centered-text'>Select Game Mode:</div>", unsafe_allow_html=True)
-        col1, col2 = st.columns(2)
-        with col1:
-            if st.button("One Player"):
-                st.session_state.mode = 'one_player'
-                st.session_state.scores = [0]  # Only one score for one player
-                initialize_game()  # Initialize the game
-        with col2:
-            if st.button("Two Players"):
-                st.session_state.mode = 'two_players'
-                st.session_state.scores = [0, 0]  # Two scores for two players
-                initialize_game()  # Initialize the game
+        st.write("Select Game Mode:")
+        if st.button("One Player"):
+            st.session_state.mode = 'one_player'
+            st.session_state.scores = [0]  # Only one score for one player
+            initialize_game()  # Initialize the game
+        if st.button("Two Players"):
+            st.session_state.mode = 'two_players'
+            st.session_state.scores = [0, 0]  # Two scores for two players
+            initialize_game()  # Initialize the game
     else:
         # If mode is already selected, run the game
         if 'deck' not in st.session_state:
             initialize_game()
 
-        # Display the current scores and center-align them
+        # Display the current scores on the main page
         if st.session_state.mode == 'one_player':
-            st.markdown(f"<div class='centered-text'>Matches: {st.session_state.scores[0]} / {len(card_filenames)}</div>", unsafe_allow_html=True)
+            st.write(f"<div class='score-area'>Matches: {st.session_state.scores[0]} / {len(card_filenames)}</div>", unsafe_allow_html=True)
         else:
-            st.markdown(f"<div class='centered-text'>Player 1 Matches: {st.session_state.scores[0]} / {len(card_filenames)}</div>", unsafe_allow_html=True)
-            st.markdown(f"<div class='centered-text'>Player 2 Matches: {st.session_state.scores[1]} / {len(card_filenames)}</div>", unsafe_allow_html=True)
+            st.write(f"<div class='score-area'>Player 1 Matches: {st.session_state.scores[0]} / {len(card_filenames)}</div>", unsafe_allow_html=True)
+            st.write(f"<div class='score-area'>Player 2 Matches: {st.session_state.scores[1]} / {len(card_filenames)}</div>", unsafe_allow_html=True)
+            
+            # Display current turn in two-player mode
             st.markdown(f"<div class='centered-text'>Current Turn: Player {st.session_state.current_player + 1}</div>", unsafe_allow_html=True)
 
         # Render the memory game board
