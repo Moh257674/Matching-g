@@ -33,7 +33,7 @@ def match_check(deck, flipped):
 
 # Display the memory board of cards
 def display_board(deck, flipped_cards, matched_cards):
-    cols = st.columns(8)  # Create 8 columns for a larger grid
+    cols = st.columns(8)  # Create columns for a larger grid
     for i, card in enumerate(deck):
         col = cols[i % 8]  # Assign the card to the correct column
         if i in flipped_cards or i in matched_cards:
@@ -44,7 +44,6 @@ def display_board(deck, flipped_cards, matched_cards):
                 st.session_state.flipped_cards.append(i)
             col.image(Image.open(card_images_path + "card_back.png"), use_column_width=True)
 
-# CSS to disable the zoom/magnifier icon on hover
 # CSS to disable the "View fullscreen" magnifier icon on images
 def inject_css():
     st.markdown(
@@ -72,14 +71,14 @@ def inject_css():
         """, unsafe_allow_html=True
     )
 
-# Main Streamlit application logic
+# Main Streamlit application
 def main_streamlit():
     st.title("Memory Match Game")
 
     # Inject custom CSS
     inject_css()
 
-    # Mode selection logic
+    # Mode selection 
     if 'mode' not in st.session_state:
         st.write("Select Game Mode:")
         if st.button("One Player"):
