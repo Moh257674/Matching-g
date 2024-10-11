@@ -1,9 +1,3 @@
-import pygame
-from pygame.locals import *
-import time
-import random
-import streamlit as st
-
 # --- STREAMLIT VERSION ---
 import streamlit as st
 from PIL import Image
