@@ -35,14 +35,15 @@ def display_board(deck, flipped_cards, matched_cards):
     cols = st.columns(15)  # Create columns for a larger grid
     for i, card in enumerate(deck):
         col = cols[i % 15]  # Assign the card to the correct column
-
-        # If the card is flipped or matched, show the actual card image
+        
         if i in flipped_cards or i in matched_cards:
+            # Show the actual card image
             col.image(card, use_column_width=True)
         else:
-            # Show the back image as a button
-            if col.button("", key=f"button-{i}", help="Flip the card"):  
-                st.session_state.flipped_cards.append(i)  # Add index to flipped cards
+            # Show the back image as a clickable image
+            if col.image(Image.open(card_images_path + "card_back.png"), use_column_width=True, caption="", output_format="auto"):
+                # On image click, add index to flipped cards
+                st.session_state.flipped_cards.append(i)  # Append the clicked card index
 
 # CSS to center align elements and add styling
 def inject_css():
