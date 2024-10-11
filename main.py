@@ -31,7 +31,6 @@ def match_check(deck, flipped):
         return deck[flipped[0]] == deck[flipped[1]]
     return False
 
-# Display the memory board of cards
 def display_board(deck, flipped_cards, matched_cards):
     cols = st.columns(10)  # Create 10 columns for a grid with 10 cards per row
     for i, card in enumerate(deck):
@@ -48,8 +47,11 @@ def display_board(deck, flipped_cards, matched_cards):
                 # Show the revealed or matched card
                 st.image(card, use_column_width=True)
             else:
-                # Use the card back as a clickable image
-                if st.image(Image.open(card_images_path + "card_back.png"), use_column_width=True, caption="Click to flip", key=f"card-{i}"):
+                # Show the card back
+                st.image(Image.open(card_images_path + "card_back.png"), use_column_width=True)
+
+                # Use a small button to detect clicks
+                if st.button("", key=f"card-{i}", help="Flip the card", use_container_width=True, label_visibility="hidden"):
                     st.session_state.flipped_cards.append(i)
 
             st.markdown("</div>", unsafe_allow_html=True)
@@ -62,6 +64,14 @@ st.markdown(
         max-height: 150px;  /* Fixed height for all images */
         max-width: 100px;   /* Fixed width for all images */
         object-fit: cover;  /* Center images within the card area */
+    }
+    button {
+        height: 150px;  /* Same height as the card */
+        width: 100px;   /* Same width as the card */
+        padding: 0px;   /* No padding for the button */
+        margin: 0px;    /* No margin for the button */
+        background-color: transparent; /* Make button transparent */
+        border: none;   /* Remove border */
     }
     </style>
     """, unsafe_allow_html=True
