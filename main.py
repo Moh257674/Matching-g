@@ -41,16 +41,21 @@ def display_board(deck, flipped_cards, matched_cards):
             # Display the card back image if not flipped or matched
             if i not in flipped_cards and i not in matched_cards:
                 # Show the card back with an invisible button on top for clicks
-                if st.button("", key=f"button-{i}", help="Flip the card", 
-                             label_visibility="hidden", disabled=False):
+                button_clicked = st.button("", key=f"button-{i}", help="Flip the card", 
+                                            label_visibility="hidden", disabled=False)
+                
+                # Check if the button was clicked
+                if button_clicked:
                     # Add the card index to flipped cards on click
-                    st.session_state.flipped_cards.append(i)
+                    if len(st.session_state.flipped_cards) < 2:  # Only allow flipping if less than 2 cards are flipped
+                        st.session_state.flipped_cards.append(i)
 
                 # Always show the card back image below the button
                 st.image(Image.open(card_images_path + "card_back.png"), use_column_width=True)
             else:
                 # Show the revealed or matched card
                 st.image(card, use_column_width=True)
+
 
 # CSS to disable the "View fullscreen" magnifier icon on images
 def inject_css():
