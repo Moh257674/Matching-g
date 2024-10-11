@@ -33,9 +33,9 @@ def match_check(deck, flipped):
 
 # Display the memory board of cards
 def display_board(deck, flipped_cards, matched_cards):
-    cols = st.columns(8)  # Create 8 columns for a larger grid
+    cols = st.columns(15)  # Create 8 columns for a larger grid
     for i, card in enumerate(deck):
-        col = cols[i % 8]  # Assign the card to the correct column
+        col = cols[i % 15]  # Assign the card to the correct column
         with col:  # To control the alignment of each card
             if i in flipped_cards or i in matched_cards:
                 st.image(card, use_column_width=True)  # Show the revealed or matched card
