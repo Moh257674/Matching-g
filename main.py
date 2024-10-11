@@ -33,9 +33,9 @@ def match_check(deck, flipped):
 
 # Display the memory board of cards
 def display_board(deck, flipped_cards, matched_cards):
-    cols = st.columns(15)  # Create 10 columns for a grid with 10 cards per row
+    cols = st.columns(8)  # Create 10 columns for a grid with 10 cards per row
     for i, card in enumerate(deck):
-        col = cols[i % 15]  # Assign the card to the correct column
+        col = cols[i % 8]  # Assign the card to the correct column
         with col:  # Control the alignment and spacing
             # Static container for both the image and the button
             st.markdown(
