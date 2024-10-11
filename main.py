@@ -33,11 +33,10 @@ def match_check(deck, flipped):
 
 # Display the memory board of cards
 def display_board(deck, flipped_cards, matched_cards):
-    cols = st.columns(8)  # Create 10 columns for a grid with 10 cards per row
+    cols = st.columns(10)  # Create 10 columns for a grid with 10 cards per row
     for i, card in enumerate(deck):
-        col = cols[i % 8]  # Assign the card to the correct column
+        col = cols[i % 10]  # Assign the card to the correct column
         with col:  # Control the alignment and spacing
-            # Static container for both the image and the button
             st.markdown(
                 f"""
                 <div style="height: 150px; width: 100px; display: flex; justify-content: center; align-items: center; position: relative;">
@@ -48,14 +47,14 @@ def display_board(deck, flipped_cards, matched_cards):
                 # Show the revealed or matched card
                 st.image(card, use_column_width=True)
             else:
-                # Show the card back with a static button in the same place
-                if st.button("Flip", key=f"card-{i}", help="Flip the card", use_container_width=True):
+                # Show the card back with a very small button
+                if st.button(" ", key=f"card-{i}", help="Flip the card", use_container_width=False):  # Small button with no text
                     st.session_state.flipped_cards.append(i)
                 st.image(Image.open(card_images_path + "card_back.png"), use_column_width=True)
-            
+
             st.markdown("</div>", unsafe_allow_html=True)
 
-# CSS to ensure the button and card are aligned with the same size and spacing
+# CSS to ensure the button is very small and the card size remains consistent
 st.markdown(
     """
     <style>
@@ -69,8 +68,10 @@ st.markdown(
         object-fit: cover;  /* Center images within the card area */
     }
     button {
-        height: 150px;  /* Button has same height as the card */
-        width: 100px;   /* Button has same width as the card */
+        height: 1px;  /* Small height for the button */
+        width: 1px;   /* Small width for the button */
+        padding: 0px;  /* No padding for the button */
+        margin: 0px;   /* No margin for the button */
     }
     </style>
     """, unsafe_allow_html=True
