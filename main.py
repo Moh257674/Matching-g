@@ -40,16 +40,27 @@ def display_board(deck, flipped_cards, matched_cards):
             # Show the actual card image
             col.image(card, use_column_width=True)
         else:
-            # Show the back image as a clickable image
-            if col.image(Image.open(card_images_path + "card_back.png"), use_column_width=True, caption="", output_format="auto"):
-                # On image click, add index to flipped cards
-                st.session_state.flipped_cards.append(i)  # Append the clicked card index
+            # Show the back image with an invisible button on top
+            img_html = f"""
+            <div style="position: relative;">
+                <img src="data:image/png;base64,{Image.open(card_images_path + 'card_back.png').convert('RGBA').tobytes()}" 
+                     width="100%" 
+                     style="cursor:pointer;" 
+                     onclick="window.parent.postMessage({{"type": "flip", "index": {i}}}, '*');">
+            </div>
+            """
+            st.markdown(img_html, unsafe_allow_html=True)
 
 # CSS to center align elements and add styling
 def inject_css():
     st.markdown(
         """
         <style>
+        /* Hide the fullscreen icon (magnifying glass) */
+        button[title="View fullscreen"] {
+            display: none;
+        }
+
         /* Center align the current turn */
         .centered-text {
             display: flex;
