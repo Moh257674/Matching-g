@@ -1,4 +1,3 @@
-# --- STREAMLIT VERSION ---
 import streamlit as st
 from PIL import Image
 import random
@@ -40,23 +39,20 @@ def display_board(deck, flipped_cards, matched_cards):
         with col:
             # Display the card back image if not flipped or matched
             if i not in flipped_cards and i not in matched_cards:
-                # Show the card back with an invisible button on top for clicks
-                button_clicked = st.button("", key=f"button-{i}", help="Flip the card", 
-                                            disabled=False)  # Removed label_visibility
-                
-                # Check if the button was clicked
-                if button_clicked:
-                    # Add the card index to flipped cards on click
-                    if len(st.session_state.flipped_cards) < 2:  # Only allow flipping if less than 2 cards are flipped
-                        st.session_state.flipped_cards.append(i)
-
-                # Always show the card back image below the button
-                st.image(Image.open(card_images_path + "card_back.png"), use_column_width=True)
+                # Create an image button using Markdown
+                st.markdown(
+                    f'<a href="#" onclick="document.getElementById(\'card-{i}\').click()"><img src="{card_images_path}card_back.png" width="100%" /></a>', 
+                    unsafe_allow_html=True
+                )
+                st.button("", key=f"card-{i}", on_click=lambda idx=i: handle_click(idx))
             else:
                 # Show the revealed or matched card
                 st.image(card, use_column_width=True)
 
-
+def handle_click(index):
+    # Add the card index to flipped cards on click
+    if len(st.session_state.flipped_cards) < 2:  # Only allow flipping if less than 2 cards are flipped
+        st.session_state.flipped_cards.append(index)
 
 # CSS to disable the "View fullscreen" magnifier icon on images
 def inject_css():
