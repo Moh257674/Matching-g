@@ -37,21 +37,29 @@ def display_board(deck, flipped_cards, matched_cards):
         col = cols[i % 15]  # Assign the card to the correct column
         
         with col:
-            # Display the card back image if not flipped or matched
-            if i not in flipped_cards and i not in matched_cards:
-                # Use an HTML image link to flip the card
-                st.markdown(
-                    f'<a href="#" onclick="window.parent.postMessage({{"type": "flip", "index": {i}}}, "*")"><img src="{card_images_path}card_back.png" width="100%" /></a>',
-                    unsafe_allow_html=True
-                )
+            # Check if the card is flipped or matched
+            if i in flipped_cards or i in matched_cards:
+                st.image(card, use_column_width=True)  # Show the revealed or matched card
             else:
-                # Show the revealed or matched card
-                st.image(card, use_column_width=True)
+                # Show the card back
+                if st.button("", key=f"card-{i}", help="Flip the card", label_visibility="hidden"):
+                    handle_click(i)
 
+# Function to handle card clicks
 def handle_click(index):
-    # Add the card index to flipped cards on click
-    if len(st.session_state.flipped_cards) < 2:  # Only allow flipping if less than 2 cards are flipped
+    if index not in st.session_state.flipped_cards:
         st.session_state.flipped_cards.append(index)
+    
+    # If two cards are flipped, check for matches
+    if len(st.session_state.flipped_cards) == 2:
+        if match_check(st.session_state.deck, st.session_state.flipped_cards):
+            st.session_state.matched_cards.extend(st.session_state.flipped_cards)
+            st.session_state.scores[st.session_state.current_player] += 1  # Increment score for the current player
+        # Switch to the other player in two-player mode
+        if st.session_state.mode == 'two_players':
+            st.session_state.current_player = 1 - st.session_state.current_player
+        # Reset flipped cards
+        st.session_state.flipped_cards = []
 
 # CSS to disable the "View fullscreen" magnifier icon on images
 def inject_css():
@@ -115,17 +123,6 @@ def main_streamlit():
 
         # Render the memory game board
         display_board(st.session_state.deck, st.session_state.flipped_cards, st.session_state.matched_cards)
-
-        # Check if two cards are flipped
-        if len(st.session_state.flipped_cards) == 2:
-            if match_check(st.session_state.deck, st.session_state.flipped_cards):
-                st.session_state.matched_cards.extend(st.session_state.flipped_cards)
-                st.session_state.scores[st.session_state.current_player] += 1  # Increment score for the current player
-            if st.session_state.mode == 'two_players':
-                # Switch to the other player after checking matches
-                st.session_state.current_player = 1 - st.session_state.current_player
-            # Reset flipped cards after a brief delay
-            st.session_state.flipped_cards = []
 
 def initialize_game():
     st.session_state.deck = initialize_deck(card_filenames, card_images_path)
