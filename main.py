@@ -42,7 +42,7 @@ def display_board(deck, flipped_cards, matched_cards):
             if i not in flipped_cards and i not in matched_cards:
                 # Show the card back with an invisible button on top for clicks
                 button_clicked = st.button("", key=f"button-{i}", help="Flip the card", 
-                                            label_visibility="hidden", disabled=False)
+                                            disabled=False)  # Removed label_visibility
                 
                 # Check if the button was clicked
                 if button_clicked:
@@ -55,6 +55,7 @@ def display_board(deck, flipped_cards, matched_cards):
             else:
                 # Show the revealed or matched card
                 st.image(card, use_column_width=True)
+
 
 
 # CSS to disable the "View fullscreen" magnifier icon on images
