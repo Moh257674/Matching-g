@@ -42,8 +42,11 @@ def display_board(deck, flipped_cards, matched_cards):
                 st.image(card, use_column_width=True)  # Show the revealed or matched card
             else:
                 # Show the card back
-                if st.button("", key=f"card-{i}", help="Flip the card", label_visibility="hidden"):
+                if st.button("", key=f"card-{i}"):  # Use a button to track clicks
                     handle_click(i)
+                    st.image(Image.open(card_images_path + "card_back.png"), use_column_width=True)
+                else:
+                    st.image(Image.open(card_images_path + "card_back.png"), use_column_width=True)
 
 # Function to handle card clicks
 def handle_click(index):
