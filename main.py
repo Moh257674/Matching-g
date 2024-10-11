@@ -3,7 +3,7 @@ import streamlit as st
 from PIL import Image
 import random
 
-# Path to your card images folder
+# Path to card images folder
 card_images_path = 'card_images/'
 
 # List of all individual card filenames (excluding card_back.png and orig_cards.gif)
@@ -33,9 +33,9 @@ def match_check(deck, flipped):
 
 # Display the memory board of cards
 def display_board(deck, flipped_cards, matched_cards):
-    cols = st.columns(8)  # Create 8 columns for a larger grid
+    cols = st.columns(6)  # Create 8 columns for a larger grid
     for i, card in enumerate(deck):
-        col = cols[i % 8]  # Assign the card to the correct column
+        col = cols[i % 6]  # Assign the card to the correct column
         if i in flipped_cards or i in matched_cards:
             col.image(card, use_column_width=True)  # Show the revealed or matched card
         else:
