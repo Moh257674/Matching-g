@@ -42,7 +42,7 @@ def display_board(deck, flipped_cards, matched_cards):
             # Show the card back
             if col.button("", key=f"card-{i}"):  # Using a button to track clicks
                 st.session_state.flipped_cards.append(i)
-            col.image(Image.open(card_images_path + "card_back.png"), use_column_width=True)  
+            col.image(Image.open(card_images_path + "card_back.png"), use_column_width=True)
 
 # CSS to disable the zoom/magnifier icon on hover
 # CSS to disable the "View fullscreen" magnifier icon on images
@@ -54,10 +54,23 @@ def inject_css():
         button[title="View fullscreen"] {
             display: none;
         }
+
+        /* Center align the current turn */
+        .centered-text {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 24px;
+        }
+
+        /* Add margin between the score and the game board */
+        .score-area {
+            margin-bottom: 20px;
+        }
         </style>
         """, unsafe_allow_html=True
     )
-
 
 # Main Streamlit application logic
 def main_streamlit():
@@ -84,11 +97,13 @@ def main_streamlit():
 
         # Display the current scores on the main page
         if st.session_state.mode == 'one_player':
-            st.write(f"Matches: {st.session_state.scores[0]} / {len(card_filenames)}")
+            st.write(f"<div class='score-area'>Matches: {st.session_state.scores[0]} / {len(card_filenames)}</div>", unsafe_allow_html=True)
         else:
-            st.write(f"Player 1 Matches: {st.session_state.scores[0]} / {len(card_filenames)}")
-            st.write(f"Player 2 Matches: {st.session_state.scores[1]} / {len(card_filenames)}")
-            st.write(f"Current Turn: Player {st.session_state.current_player + 1}")
+            st.write(f"<div class='score-area'>Player 1 Matches: {st.session_state.scores[0]} / {len(card_filenames)}</div>", unsafe_allow_html=True)
+            st.write(f"<div class='score-area'>Player 2 Matches: {st.session_state.scores[1]} / {len(card_filenames)}</div>", unsafe_allow_html=True)
+
+        # Center the current player's turn
+        st.markdown(f"<div class='centered-text'>Current Turn: Player {st.session_state.current_player + 1}</div>", unsafe_allow_html=True)
 
         # Render the memory game board
         display_board(st.session_state.deck, st.session_state.flipped_cards, st.session_state.matched_cards)
