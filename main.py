@@ -33,18 +33,35 @@ def match_check(deck, flipped):
 
 # Display the memory board of cards
 def display_board(deck, flipped_cards, matched_cards):
-    cols = st.columns(15)  # Create 8 columns for a larger grid
+    cols = st.columns(8)  # Create 8 columns for a larger grid
     for i, card in enumerate(deck):
-        col = cols[i % 15]  # Assign the card to the correct column
-        if i in flipped_cards or i in matched_cards:
-            col.image(card, use_column_width=True)  # Show the revealed or matched card
-        else:
-            # Show the card back
-            if col.button("", key=f"card-{i}"):  # Using a button to track clicks
-                st.session_state.flipped_cards.append(i)
-            col.image(Image.open(card_images_path + "card_back.png"), use_column_width=True)
+        col = cols[i % 8]  # Assign the card to the correct column
+        with col:  # To control the alignment of each card
+            if i in flipped_cards or i in matched_cards:
+                st.image(card, use_column_width=True)  # Show the revealed or matched card
+            else:
+                # Show the card back
+                if st.button("", key=f"card-{i}"):  # Using a button to track clicks
+                    st.session_state.flipped_cards.append(i)
+                st.image(Image.open(card_images_path + "card_back.png"), use_column_width=True)
+                
+    # Add custom CSS to ensure fixed height and alignment
+    st.markdown(
+        """
+        <style>
+        .element-container {
+            display: flex;
+            justify-content: center;
+        }
+        img {
+            max-height: 150px;  /* Set a fixed height for all images */
+            object-fit: cover;  /* Ensure all images are centered and scaled */
+        }
+        </style>
+        """, unsafe_allow_html=True
+    )
 
-# CSS to disable the zoom/magnifier icon on hover
+
 # CSS to disable the "View fullscreen" magnifier icon on images
 def inject_css():
     st.markdown(
