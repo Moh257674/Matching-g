@@ -37,9 +37,10 @@ def display_board(deck, flipped_cards, matched_cards):
     for i, card in enumerate(deck):
         col = cols[i % 10]  # Assign the card to the correct column
         with col:  # Control the alignment and spacing
+            # Static container for both the image and its click functionality
             st.markdown(
                 f"""
-                <div style="height: 150px; width: 100px; display: flex; justify-content: center; align-items: center; position: relative;">
+                <div style="height: 150px; width: 100px; display: flex; justify-content: center; align-items: center;">
                 """, unsafe_allow_html=True
             )
 
@@ -47,31 +48,20 @@ def display_board(deck, flipped_cards, matched_cards):
                 # Show the revealed or matched card
                 st.image(card, use_column_width=True)
             else:
-                # Show the card back with a very small button
-                if st.button(" ", key=f"card-{i}", help="Flip the card", use_container_width=False):  # Small button with no text
+                # Use the card back as a clickable image
+                if st.image(Image.open(card_images_path + "card_back.png"), use_column_width=True, caption="Click to flip", key=f"card-{i}"):
                     st.session_state.flipped_cards.append(i)
-                st.image(Image.open(card_images_path + "card_back.png"), use_column_width=True)
 
             st.markdown("</div>", unsafe_allow_html=True)
 
-# CSS to ensure the button is very small and the card size remains consistent
+# CSS to ensure the card size remains consistent
 st.markdown(
     """
     <style>
-    .element-container {
-        display: flex;
-        justify-content: center;
-    }
     img {
         max-height: 150px;  /* Fixed height for all images */
         max-width: 100px;   /* Fixed width for all images */
         object-fit: cover;  /* Center images within the card area */
-    }
-    button {
-        height: 1px;  /* Small height for the button */
-        width: 1px;   /* Small width for the button */
-        padding: 0px;  /* No padding for the button */
-        margin: 0px;   /* No margin for the button */
     }
     </style>
     """, unsafe_allow_html=True
