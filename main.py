@@ -42,7 +42,9 @@ def display_board(deck, flipped_cards, matched_cards):
         else:
             # Show the button to flip the card
             if col.button("", key=f"button-{i}"):  # Button click event
-                st.session_state.flipped_cards.append(i)  # Add index to flipped cards
+                if len(st.session_state.flipped_cards) < 2:  # Allow flipping only if less than 2 cards are flipped
+                    st.session_state.flipped_cards.append(i)  # Add index to flipped cards
+                    st.experimental_rerun() 
 
 # CSS to center align elements and add styling
 def inject_css():
@@ -79,12 +81,13 @@ def main_streamlit():
         if st.button("One Player"):
             st.session_state.mode = 'one_player'
             st.session_state.scores = [0]  # Only one score for one player
-            st.session_state.current_player = 0  # Initialize for single-player to avoid errors
+            st.experimental_rerun()
             initialize_game()  # Initialize the game
         if st.button("Two Players"):
             st.session_state.mode = 'two_players'
             st.session_state.scores = [0, 0]  # Two scores for two players
-            st.session_state.current_player = 0  # Initialize player tracking for two players
+            st.session_state.current_player = 0  # Initialize current player to 0 (first player)
+            st.experimental_rerun()
             initialize_game()  # Initialize the game
     else:
         # If mode is already selected, run the game
@@ -115,13 +118,21 @@ def main_streamlit():
             # Reset flipped cards after a brief delay
             st.session_state.flipped_cards = []
 
+        # Check if all cards are matched and show a congrats message
+        if len(st.session_state.matched_cards) == len(st.session_state.deck):
+            if st.session_state.mode == 'one_player':
+                st.success("🎉 Congratulations! You've matched all the cards!")
+            else:
+                winner = "Player 1" if st.session_state.scores[0] > st.session_state.scores[1] else "Player 2"
+                st.success(f"🎉 {winner} wins the game! Congratulations!")
 
 def initialize_game():
+    # Ensure that session state variables are initialized
     st.session_state.deck = initialize_deck(card_filenames, card_images_path)
     st.session_state.flipped_cards = []  # Stores indices of currently flipped cards
     st.session_state.matched_cards = []  # Stores indices of matched cards
-    if st.session_state.mode == 'two_players':
-        st.session_state.current_player = 0  # Track current player (0 or 1)
+    if 'current_player' not in st.session_state:
+        st.session_state.current_player = 0  # Initialize current player to 0 if not already set
 
 # Run the Streamlit app
 if __name__ == "__main__":
