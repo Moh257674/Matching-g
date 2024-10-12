@@ -1,6 +1,8 @@
 import streamlit as st
 from PIL import Image
 import random
+import base64
+from io import BytesIO
 
 # Path to your card images folder
 card_images_path = 'card_images/'
@@ -30,6 +32,12 @@ def match_check(deck, flipped):
         return deck[flipped[0]] == deck[flipped[1]]
     return False
 
+# Helper function to convert PIL image to base64 string
+def card_to_base64(image):
+    buffered = BytesIO()
+    image.save(buffered, format="PNG")
+    return base64.b64encode(buffered.getvalue()).decode("utf-8")
+
 # Display the memory board of cards
 def display_board(deck, flipped_cards, matched_cards):
     cols = st.columns(15)  # Create columns for a larger grid
@@ -38,7 +46,15 @@ def display_board(deck, flipped_cards, matched_cards):
 
         # If the card is flipped or matched, show the image
         if i in flipped_cards or i in matched_cards:
-            col.image(card, use_column_width=True)
+            with col:
+                st.markdown(
+                    f"""
+                    <div style="text-align:center;">
+                        <img src="data:image/png;base64,{card_to_base64(card)}" style="width: 100%; height: auto; pointer-events: none;" />
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
         else:
             # Show the button to flip the card
             if col.button("", key=f"button-{i}"):  # Button click event
@@ -114,7 +130,6 @@ def main_streamlit():
                 st.session_state.current_player = 1 - st.session_state.current_player
             # Reset flipped cards after a brief delay
             st.session_state.flipped_cards = []
-
 
 def initialize_game():
     st.session_state.deck = initialize_deck(card_filenames, card_images_path)
