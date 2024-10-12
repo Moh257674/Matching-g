@@ -79,10 +79,12 @@ def main_streamlit():
         if st.button("One Player"):
             st.session_state.mode = 'one_player'
             st.session_state.scores = [0]  # Only one score for one player
+            st.session_state.current_player = 0  # Initialize for single-player to avoid errors
             initialize_game()  # Initialize the game
         if st.button("Two Players"):
             st.session_state.mode = 'two_players'
             st.session_state.scores = [0, 0]  # Two scores for two players
+            st.session_state.current_player = 0  # Initialize player tracking for two players
             initialize_game()  # Initialize the game
     else:
         # If mode is already selected, run the game
@@ -112,6 +114,7 @@ def main_streamlit():
                 st.session_state.current_player = 1 - st.session_state.current_player
             # Reset flipped cards after a brief delay
             st.session_state.flipped_cards = []
+
 
 def initialize_game():
     st.session_state.deck = initialize_deck(card_filenames, card_images_path)
