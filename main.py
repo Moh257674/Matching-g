@@ -44,6 +44,14 @@ def display_board(deck, flipped_cards, matched_cards):
             if col.button("", key=f"button-{i}"):  # Button click event
                 if len(st.session_state.flipped_cards) < 2:  # Allow flipping only if less than 2 cards are flipped
                     st.session_state.flipped_cards.append(i)  # Add index to flipped cards
+                    if len(st.session_state.flipped_cards) == 2:
+                        # Check for a match after two cards are flipped
+                        if match_check(deck, st.session_state.flipped_cards):
+                            st.session_state.matched_cards.extend(st.session_state.flipped_cards)
+                        else:
+                            st.session_state.current_player = 1 - st.session_state.current_player
+                        st.session_state.flipped_cards = []
+                    st.experimental_rerun()  # Immediately update the board after one click
 
 # CSS to center align elements and add styling
 def inject_css():
@@ -103,17 +111,6 @@ def main_streamlit():
 
         # Render the memory game board
         display_board(st.session_state.deck, st.session_state.flipped_cards, st.session_state.matched_cards)
-
-        # Check if two cards are flipped
-        if len(st.session_state.flipped_cards) == 2:
-            if match_check(st.session_state.deck, st.session_state.flipped_cards):
-                st.session_state.matched_cards.extend(st.session_state.flipped_cards)
-                st.session_state.scores[st.session_state.current_player] += 1  # Increment score for the current player
-            if st.session_state.mode == 'two_players':
-                # Switch to the other player after checking matches
-                st.session_state.current_player = 1 - st.session_state.current_player
-            # Reset flipped cards after a brief delay
-            st.session_state.flipped_cards = []
 
         # Check if all cards are matched and show a congrats message
         if len(st.session_state.matched_cards) == len(st.session_state.deck):
