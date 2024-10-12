@@ -44,7 +44,6 @@ def display_board(deck, flipped_cards, matched_cards):
             if col.button("", key=f"button-{i}"):  # Button click event
                 if len(st.session_state.flipped_cards) < 2:  # Allow flipping only if less than 2 cards are flipped
                     st.session_state.flipped_cards.append(i)  # Add index to flipped cards
-                    st.experimental_rerun() 
 
 # CSS to center align elements and add styling
 def inject_css():
@@ -81,13 +80,11 @@ def main_streamlit():
         if st.button("One Player"):
             st.session_state.mode = 'one_player'
             st.session_state.scores = [0]  # Only one score for one player
-            st.experimental_rerun()
             initialize_game()  # Initialize the game
         if st.button("Two Players"):
             st.session_state.mode = 'two_players'
             st.session_state.scores = [0, 0]  # Two scores for two players
             st.session_state.current_player = 0  # Initialize current player to 0 (first player)
-            st.experimental_rerun()
             initialize_game()  # Initialize the game
     else:
         # If mode is already selected, run the game
